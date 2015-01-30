@@ -6,7 +6,9 @@
 
 function newClass(c) {
     tmp = {};
-    tmp.__proto__ = c.init();
+    delete arguments[0];
+    tmp.__proto__ = c;
+    c.init(arguments);
     return tmp;
 }
 

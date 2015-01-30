@@ -108,6 +108,99 @@ function injectCustomStyle(str) {
 }
 
 
+function replaceImage(img, path) {
+    newImage = chrome.extension.getURL(path);
+    img.attr('src', newImage);
+}
+
+
+var ToggleImage = {
+    src: {},
+    index: 0,
+    img: null,
+    size: 0,
+
+    init: function(args) {
+        img = args[1];
+        this.img = img;
+        idx = 0;
+
+        if (args) {
+            for(i in args) {
+                src = null;
+
+                if (args[i].src) {
+                    src = args[i].src;
+                } else if (args[i].ext) {
+                    src = chrome.extension.getURL(args[i].ext);
+                }
+
+                if (src) {
+                    this.src[idx] = src;
+                    idx++;
+                 
+                    if (args[i].tag) this.src[args[i].tag] = src;
+                }
+            }
+        }
+        this.size = idx;
+        this.index = 0;
+    },
+
+    cycle: function() {
+        this.index = (this.index + 1) % this.size;
+        this.show(this.index);
+    },
+
+    show: function(index) {
+        console.log('index: ', this.index);
+        this.img.attr('src', this.src[this.index]);
+    },
+
+    tag: function(tag) {
+        this.img.attr('src', this.src[tag]);
+    }
+}
+
+
+
+//
+// 1. Находит элементы соотвествующие cssPath
+// 2. Добавляет рядом с ними новые элементы с ID = prefix + id найденного элемента
+// 3. добавляет обработчики событий к новым элементам
+// 4. Скрывает новые элементы
+//
+function addIndexedDiv(cssPath, prefix, content, className, events, callback) {
+    cbList = $(cssPath);
+    _.forEach(cbList, function(value, key) {
+        cb = $(value);
+        newBtn = document.createElement('div');
+        $(newBtn).toggleClass(className, true);
+        $(newBtn).attr('id', prefix + value.value);
+        $(newBtn).html(content);
+        $(newBtn).hide();
+
+        cb.parent().append(newBtn);
+
+        $(newBtn).on(events, callback);
+    });
+}
+
+
+function toggleRowStyle(id, style, flag) {
+    first = $('#'+id).parent();
+
+    first.prevAll().map(function(idx, td) {
+        $(td).toggleClass(style, flag);
+    });
+
+    $(first).toggleClass(style, flag);
+
+    first.nextAll().map(function(idx, td) {
+        $(td).toggleClass(style, flag);
+    });
+}
+
 
 //
 //
@@ -127,3 +220,6 @@ function getValue(key) {
 
     return val;
 }
+
+
+

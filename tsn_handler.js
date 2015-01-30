@@ -1,77 +1,127 @@
-var logoContainer;
+var logoContainer, tim;
+
 
 if (window.location.href.contains(TSNURL)) {
     console.log('Найдена вкладка сайта КВАРТИРНЫЙ ВОПРОС');
     console.log('Функционал сайта значииельно расширен ;)');
 
-    logoContainer = $('img[src="http://tsn.spb.ru/img/appl_logo.png"]').parent();
+    tim = newClass(ToggleImage,
+        $('img[src="http://tsn.spb.ru/img/appl_logo.png"]'),
+        {tag: 'offline', src: 'http://tsn.spb.ru/img/appl_logo.png'},
+        {tag: 'online', ext: 'appl_logo_plus.png'}
+    );
 
-    injectCustomStyle('.uploaded { background-color: lightblue !important; }');
+
+    injectCustomStyle('.uploaded { background-color: lightblue !important; border-top: 1px solid white !important; }');
     injectCustomStyle('.tsn_logo { margin: 20px 0px !important;}');
+    injectCustomStyle('.tsn_plus { cursor: pointer; font-size: 1.5em; color: green; padding: 3px}');
+    injectCustomStyle('.tsn_remove { cursor: pointer; font-size: 1.5em; color: red; padding: 3px}');
+
     
     chrome.extension.onRequest.addListener(onTsnExtensionMessage);
 
     init();
 }
 
+
+
 function isExtEnable() {
     return (getValue('TSN_STATUS')===true) ? true : false;
 }
 
 
-function trigger(e) {
-    ifFireOnline(function() {
-        if (e.target.name == 'checkall') {
-            checkAllElements(e.target);
-        } else {
-            checkElement(e.target, e.target.checked);
-        }
-    });
-}
-
-function deinit() {
-    //$('body > table > tbody > tr:nth-child(1) > td:nth-child(2) > table > tbody > tr > td:nth-child(1)').show();
-
-    var logo = document.createElement('img');
-    logo.width = 220;
-    logo.border = 0;
-
-    logo.src = "http://tsn.spb.ru/img/appl_logo.png";
-    logo.className = "tsn_logo"
-
-    logoContainer.html('');//remove();
-    logoContainer.append(logo);
-
-    $('.results > tbody > tr input').off('change', trigger);
-    console.log('Расширение выключено');
-
-    cb = getCheckBoxes();
-    for(i in cb) {
-        toggleCheckBoxRowStyle(cb[i], 'uploaded', false);
-    }
-}
 
 function init() {
     if (!isExtEnable()) return;
-    //$('body > table > tbody > tr:nth-child(1) > td:nth-child(2) > table > tbody > tr > td:nth-child(1)').hide();
 
     ifFireOnline(function() {
-        var logo = document.createElement('img');
-        logo.width = 220;
-        logo.border = 0;
+        tim.tag('online');
 
-        logo_plus_path = chrome.extension.getURL("appl_logo_plus.png");
-        logo.src = logo_plus_path;
-        logo.className = "tsn_logo"
+        addButtons();
 
-        logoContainer.html('');//remove();
-        logoContainer.append(logo);
+        $('.results > tbody > tr input').hide();
+        $('.tsn_plus').show();
 
-
-        $('.results > tbody > tr input').on('change', trigger);
         console.log('Расширение включено');
     });
 }
+
+
+
+
+
+function deinit() {
+    //logoContainer.attr('src', "http://tsn.spb.ru/img/appl_logo.png");
+    tim.tag('offline');
+    $('.tsn_plus').hide();
+    $('.tsn_remove').hide();
+
+    $('.results > tbody > tr input').show();
+
+    console.log('Расширение ВЫКЛЮЧЕНО!');
+
+    cb = getCheckBoxes();
+    for(i in cb) {
+        toggleRowStyle('add_'+cb[i], 'uploaded', false);
+    }
+}
+
+
+
+
+function uploadElement(e) {
+    n = $(e).parent();
+    f = parseRow(n);
+
+    id = e.id.match(/\d+/)[0];
+
+    chrome.extension.sendMessage('ajbehjoeddgfbhdfhjdmjkajjnamekag', {cmd: 'add', id: id, data: f});
+    markRow(id);
+}
+
+function removeElement(e) {
+    id = e.id.match(/\d+/)[0];
+
+    chrome.extension.sendMessage('ajbehjoeddgfbhdfhjdmjkajjnamekag', {cmd: 'delete', id: id});
+    unmarkRow(id);
+}
+
+function markRow(id) {
+    toggleRowStyle('add_'+id, 'uploaded', true);
+    $('#add_'+id).hide();
+    $('#remove_'+id).show();
+}
+
+function unmarkRow(id) {
+    toggleRowStyle('add_'+id, 'uploaded', false);
+    $('#remove_'+id).hide();
+    $('#add_'+id).show();
+}
+
+
+
+
+var addButtons = _.once(function() {
+    addIndexedDiv('.results > tbody > tr input', 'add_', icons.plus, 'tsn_plus', 'click', function(e) {
+        ifFireOnline(function() {
+            uploadElement(e.target);
+        });
+
+    });
+
+    addIndexedDiv('.results > tbody > tr input', 'remove_', icons.remove, 'tsn_remove', 'click', function(e) {
+        ifFireOnline(function() {
+            removeElement(e.target);
+        });
+    });
+
+    $('#add_1').remove();
+    $('#remove_1').remove();
+});
+
+
+
+
 
 
 
@@ -83,7 +133,6 @@ function parseRow(startElem) {
         n = n.next();
         return n;
     }
-
     
 
     fn = ['date','nk','address','metro','level','So','Sl','Sk',
@@ -145,51 +194,18 @@ function parseRow(startElem) {
 }
 
 
-function checkElement(e, checked) {
-
-    if (checked) {
-        n = $('#'+e.id).parent();
-        f = parseRow(n);
-
-        chrome.extension.sendMessage('ajbehjoeddgfbhdfhjdmjkajjnamekag', {cmd: 'add', id: e.value, data: f});
-        toggleCheckBoxRowStyle(e.id, 'uploaded', true);
-
-    } else {
-        chrome.extension.sendMessage('ajbehjoeddgfbhdfhjdmjkajjnamekag', {cmd: 'delete', id: e.value});
-        toggleCheckBoxRowStyle(e.id, 'uploaded', false);
-    }
-
-    return e.value;
-}
 
 
 function getCheckBoxes() {
     data = {};
     c_boxes = $("#submitForm input[name='selectedID[]']");
-    c_boxes.each(function(i,v){ data[v.value] = v.id } );
+    c_boxes.each(function(i,v){ data[v.value] = v.value } );
     return data;
 }
 
-function checkAllElements(e) {
-  try {
-    c_boxes = $("#submitForm input[name='selectedID[]']");
-    c_boxes.each(function(i,el) {
-      checkElement(el, e.checked);
-    });
-  } catch(e) {
-    console.log("Error: ", e);
-  }
-}
 
 
-function toggleCheckBoxRowStyle(id, style, flag) {
-    first = $('#'+id).parent();
-    row = first.nextAll();
-    row.push(first);
-    row.map(function(idx, td) {
-        $(td).toggleClass(style, flag);
-    });
-}
+
 
 
 function onTsnExtensionMessage(request, ext, resp) {
@@ -223,7 +239,8 @@ function onTsnExtensionMessage(request, ext, resp) {
                 cbl = request.data;
 
                 for(i in cbl) {
-                    toggleCheckBoxRowStyle(cbl[i], 'uploaded', true);
+                    //toggleRowStyle(cbl[i], 'uploaded', true);
+                    markRow(cbl[i]);
                 }
             }
 

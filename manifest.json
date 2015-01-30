@@ -55,6 +55,7 @@
         // external libs
         "firebase.js",
         "jquery-1.11.2.js",
+        "lodash.min.js",
 
         // utils
         "constants.js",
