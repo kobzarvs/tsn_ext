@@ -1,0 +1,57 @@
+<html>
+  <head>
+    <title>Facebook Connect For Chrome Extension</title>
+    <link rel="stylesheet" href="jquery-ui.min.css">
+
+    <script type="text/javascript" src="jquery-1.11.2.js"></script>
+    <script type="text/javascript" src="jquery-ui.min.js"></script>
+    <script type="text/javascript" src="firebase.js"></script>
+
+    <script type="text/javascript" src="constants.js"></script>
+    <script type="text/javascript" src="utils.js"></script>
+    <script type="text/javascript" src="firebase_utils.js"></script>
+    <script type="text/javascript" src="chrome_utils.js"></script>
+
+    <script type="text/javascript" src="crm_interface.js"></script>
+    <script type="text/javascript" src="tsn_interface.js"></script>
+
+    <script type="text/javascript" src="popup.js"></script>
+    <style type="text/css">
+    span {
+    	padding-top: 2px;
+    	padding-left: 1em;
+    	padding-right: 1em;
+    }
+    .bold { font-weight: bold; }
+    .hidden {
+    	display: none !important;
+    	visibility: hidden;
+	}
+	.online { background-color: seagreen; color: white; }
+	.offline { background-color: red; color: white; }
+
+	#mainPopup {
+		padding: 10px;
+		width: 500px;
+		font-family: Helvetica, Ubuntu, Arial, sans-serif;
+	}
+	h1 {
+		font-size: 2em;
+	}
+	</style>
+
+  </head>
+  <body id='mainPopup'>
+    <h1>Расширение функционала сайта Квартирный вопрос</h1>
+	
+	<p>
+	Статус подключения к базе: <span id="fireStatus" class="offline" />
+	</p>
+	<p>
+    <input id="fireBtnLogin" type="button" value="Установвить соединение с базой" />
+    <div id="extStatus" />
+    </p>
+
+
+  </body>
+</html>
