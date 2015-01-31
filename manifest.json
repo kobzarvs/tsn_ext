@@ -16,7 +16,8 @@
     //"persistent": true,
     "scripts": [
       // external libs
-      "firebase.js",
+      "ext/firebase.js",
+      "ext/lodash.min.js",
 
       // utils
       "constants.js",
@@ -50,12 +51,14 @@
         "http://localhost/*",
         "http://127.0.0.1/*"
       ],
+      
       "all_frames": true,
+
       "js": [
         // external libs
-        "firebase.js",
-        "jquery-1.11.2.js",
-        "lodash.min.js",
+        "ext/firebase.js",
+        "ext/jquery-2.1.3.min.js",
+        "ext/lodash.min.js",
 
         // utils
         "constants.js",
@@ -81,8 +84,7 @@
   },
 
   "web_accessible_resources": [
-    "appl_logo_plus.png",
-    "appl_logo.png"
+    "appl_logo_plus.png"
   ],
 
   "content_security_policy": "script-src 'self' https://cdn.firebase.com https://*.firebaseio.com; object-src 'self'"

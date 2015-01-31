@@ -31,13 +31,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function setTsnStatus() {
     if (!getValue('TSN_STATUS')) {
-        $('#extStatus').html('<div id="extStatus"><input id="tsnBtnEnable" type="button" value="Включить расширение" /></div>');
+        $('#extStatus').html('<div id="extStatus"><div id="tsnBtnEnable" class="ui labeled icon button"><i class="power icon red" />Включить расширение</div></div>');
         $('#tsnBtnEnable').on('click', function(e) {
             enableTsn();
             setTsnStatus();
         });
     } else {
-        $('#extStatus').html('<div id="extStatus"><input id="tsnBtnDisable" type="button" value="Отключить расширение" /></div>');
+        $('#extStatus').html('<div id="extStatus"><div id="tsnBtnDisable" class="ui labeled icon button"><i class="power icon green" />Отключить расширение"</div></div>');
         $('#tsnBtnDisable').on('click', function(e) {
             disableTsn();
             setTsnStatus();

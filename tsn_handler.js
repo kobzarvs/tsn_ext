@@ -18,7 +18,7 @@ if (window.location.href.contains(TSNURL)) {
     injectCustomStyle('.tsn_remove { cursor: pointer; font-size: 1.5em; color: red; padding: 3px}');
 
     
-    chrome.extension.onRequest.addListener(onTsnExtensionMessage);
+    chrome.extension.onMessage.addListener(onTsnExtensionMessage);
 
     init();
 }
@@ -75,14 +75,14 @@ function uploadElement(e) {
 
     id = e.id.match(/\d+/)[0];
 
-    chrome.extension.sendMessage('ajbehjoeddgfbhdfhjdmjkajjnamekag', {cmd: 'add', id: id, data: f});
+    chrome.extension.sendMessage({cmd: 'add', id: id, data: f});
     markRow(id);
 }
 
 function removeElement(e) {
     id = e.id.match(/\d+/)[0];
 
-    chrome.extension.sendMessage('ajbehjoeddgfbhdfhjdmjkajjnamekag', {cmd: 'delete', id: id});
+    chrome.extension.sendMessage({cmd: 'delete', id: id});
     unmarkRow(id);
 }
 

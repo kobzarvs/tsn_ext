@@ -52,8 +52,8 @@ var ChromeIcon = {
 //
 //
 
-function requestToTab(tabId, cmd, cb) {
-    chrome.tabs.sendRequest(
+function messageToTab(tabId, cmd, cb) {
+    chrome.tabs.sendMessage(
         tabId, cmd,
         function(data) {
             if (cb) cb(data);

@@ -88,7 +88,7 @@ function initBackground() {
     // обработчик нажатия иконки приложения на панели
     //
     chrome.browserAction.onClicked.addListener(function(tab) {
-        chrome.tabs.sendRequest(
+        chrome.tabs.sendMessage(
             tab.id,
             {cmd:'click'}
         );

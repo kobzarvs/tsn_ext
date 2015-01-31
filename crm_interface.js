@@ -31,7 +31,7 @@ function requestAuthTokenFromAllCRM() {
         console.log("Auth token not found in tabs!");
         TID = setTimeout(function(){
             firebaseLogin();
-        },5000);
+        }, FIREBASE_RECONNECT_TIMEOUT);
     };
 
     forTabsWithUrl(

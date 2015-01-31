@@ -19,9 +19,6 @@ function onFireExtensionMessage(request, ext, resp) {
                 token = JSON.parse(localStorage['firebase:session::blistering-heat-2586']).token;
                 console.log(token);
                 resp({token: token});
-                // chrome.extension.sendRequest(
-                //     {}
-                // );
             } else {
                 console.log('token not found');
                 resp({token: undefined});
